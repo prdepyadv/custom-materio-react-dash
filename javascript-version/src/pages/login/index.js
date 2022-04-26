@@ -21,6 +21,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
+import Alert from '@mui/material/Alert'
 
 // ** Icons Imports
 import Google from 'mdi-material-ui/Google'
@@ -65,15 +66,17 @@ const LoginPage = () => {
   const [values, setValues] = useState({
     email: '',
     password: '',
-    showPassword: false
+    showPassword: false,
+    error: ''
   })
   const router = useRouter()
+  const homePageRoute = themeConfig.homePageRoute
 
   useEffect(() => {
     async function loadUserFromCookies() {
       const token = Cookies.get('token'), user_data = localStorage.getItem('user_data')
       if (token && user_data) {
-        router.push('/')
+        router.push(homePageRoute)
       }
     }
     loadUserFromCookies()
@@ -102,6 +105,11 @@ const LoginPage = () => {
       return false
     }
     auth.login(values.email, values.password)
+    .then(res => {
+      if (res.err) {
+        setValues({ ...values, error: res.message ?? '', password: '' })
+      }
+    })
   }
 
   return (
@@ -188,21 +196,34 @@ const LoginPage = () => {
             <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
           </Box>
 
-          <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
+          {values.error ? (
+            <Box sx={{ mb: 6 }}>
+              <Alert severity='error' sx={{ marginBottom: 1.5 }}>
+                {values.error}
+              </Alert>
+            </Box>
+          ) : (
+            <></>
+          )}
+
+          <form autoComplete='off' onSubmit={handleOnSubmit}>
             <TextField
               autoFocus
+              type='email'
               fullWidth
               id='email'
               label='Email'
               value={values.email}
               onChange={handleChange('email')}
               sx={{ marginBottom: 4 }}
+              required
             />
             <FormControl fullWidth>
               <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
               <OutlinedInput
                 label='Password'
                 value={values.password}
+                required
                 id='auth-login-password'
                 onChange={handleChange('password')}
                 type={values.showPassword ? 'text' : 'password'}
@@ -225,7 +246,7 @@ const LoginPage = () => {
             >
               <FormControlLabel control={<Checkbox />} label='Remember Me' />
             </Box>
-            <Button fullWidth size='large' onClick={handleOnSubmit} variant='contained' sx={{ marginBottom: 7 }}>
+            <Button fullWidth type='submit' size='large' variant='contained' sx={{ marginBottom: 7 }}>
               Login
             </Button>
             <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>

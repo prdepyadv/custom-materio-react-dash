@@ -1,8 +1,9 @@
 // ** React Imports
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -20,6 +21,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
+import Alert from '@mui/material/Alert'
 
 // ** Icons Imports
 import Google from 'mdi-material-ui/Google'
@@ -37,6 +39,9 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
+
+import Cookies from 'js-cookie'
+import { useAuth } from '../../../contexts/auth'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -61,9 +66,28 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 const RegisterPage = () => {
   // ** States
   const [values, setValues] = useState({
+    username: '',
+    email: '',
     password: '',
-    showPassword: false
+    showPassword: false,
+    error: ''
+
   })
+  const router = useRouter()
+  const homePageRoute = themeConfig.homePageRoute
+
+  useEffect(() => {
+    async function loadUserFromCookies() {
+      const token = Cookies.get('token'),
+        user_data = localStorage.getItem('user_data')
+      if (token && user_data) {
+        router.push(homePageRoute)
+      }
+    }
+    loadUserFromCookies()
+  }, [])
+
+  const auth = useAuth()
 
   // ** Hook
   const theme = useTheme()
@@ -78,6 +102,18 @@ const RegisterPage = () => {
 
   const handleMouseDownPassword = event => {
     event.preventDefault()
+  }
+
+  const handleOnSubmit = event => {
+    event.preventDefault()
+    if (!values.email || !values.password || !values.username) {
+      return false
+    }
+    auth.register(values).then(res => {
+      if(res.err){
+        setValues({ ...values, error: res.message ?? '', password: '' })
+      }
+    })
   }
 
   return (
@@ -163,9 +199,38 @@ const RegisterPage = () => {
             </Typography>
             <Typography variant='body2'>Make your app management easy and fun!</Typography>
           </Box>
-          <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField autoFocus fullWidth id='username' label='Username' sx={{ marginBottom: 4 }} />
-            <TextField fullWidth type='email' label='Email' sx={{ marginBottom: 4 }} />
+
+          {values.error ? (
+            <Box sx={{ mb: 6 }}>
+              <Alert severity='error' sx={{ marginBottom: 1.5 }}>
+                {values.error}
+              </Alert>
+            </Box>
+          ) : (
+            <></>
+          )}
+
+          <form autoComplete='off' onSubmit={handleOnSubmit}>
+            <TextField
+              autoFocus
+              fullWidth
+              id='username'
+              label='Username'
+              sx={{ marginBottom: 4 }}
+              value={values.username}
+              onChange={handleChange('username')}
+              required
+            />
+            <TextField
+              fullWidth
+              type='email'
+              id='email'
+              label='Email'
+              sx={{ marginBottom: 4 }}
+              value={values.email}
+              onChange={handleChange('email')}
+              required
+            />
             <FormControl fullWidth>
               <InputLabel htmlFor='auth-register-password'>Password</InputLabel>
               <OutlinedInput
@@ -174,6 +239,7 @@ const RegisterPage = () => {
                 id='auth-register-password'
                 onChange={handleChange('password')}
                 type={values.showPassword ? 'text' : 'password'}
+                required
                 endAdornment={
                   <InputAdornment position='end'>
                     <IconButton
@@ -189,7 +255,7 @@ const RegisterPage = () => {
               />
             </FormControl>
             <FormControlLabel
-              control={<Checkbox />}
+              control={<Checkbox required />}
               label={
                 <Fragment>
                   <span>I agree to </span>

@@ -23,6 +23,8 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 
+import themeConfig from 'src/configs/themeConfig'
+
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
   width: 8,
@@ -36,12 +38,13 @@ const UserDropdown = () => {
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
   const [username, setUsername] = useState(null)
+  const loginPageRoute = themeConfig.loginPageRoute
 
   useEffect(() => {
     async function loadUserFromCookies() {
       const user_data = localStorage.getItem('user_data')
       if (!user_data) {
-        router.push('/login')
+        router.push(loginPageRoute)
       }
       user_data = JSON.parse(user_data);
       const user_name = user_data.name.charAt(0).toUpperCase() + user_data.name.slice(1)
