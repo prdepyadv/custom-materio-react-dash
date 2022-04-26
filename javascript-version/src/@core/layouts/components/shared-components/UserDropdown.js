@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -35,6 +35,20 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 const UserDropdown = () => {
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
+  const [username, setUsername] = useState(null)
+
+  useEffect(() => {
+    async function loadUserFromCookies() {
+      const user_data = localStorage.getItem('user_data')
+      if (!user_data) {
+        router.push('/login')
+      }
+      user_data = JSON.parse(user_data);
+      const user_name = user_data.name.charAt(0).toUpperCase() + user_data.name.slice(1)
+      setUsername(user_name)
+    }
+    loadUserFromCookies()
+  }, [])
 
   // ** Hooks
   const router = useRouter()
@@ -98,7 +112,7 @@ const UserDropdown = () => {
               <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ display: 'flex', marginLeft: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 600 }}>John Doe</Typography>
+              <Typography sx={{ fontWeight: 600 }}>{username}</Typography>
               <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
                 Admin
               </Typography>

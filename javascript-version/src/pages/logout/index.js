@@ -1,9 +1,6 @@
 // ** React Imports
 import { useEffect, useState } from 'react'
-
-// ** Next Imports
-import Link from 'next/link'
-import { useRouter } from 'next/router'
+import Cookies from 'js-cookie'
 
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
@@ -15,7 +12,8 @@ const LoginPage = () => {
   const auth = useAuth()
 
   useEffect(() => {
-    auth.logout()
+    const token = Cookies.get('token')
+    auth.logout(token ?? '', '/login')
   })
 
   return (

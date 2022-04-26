@@ -23,26 +23,6 @@ const navigation = () => {
       path: '/account-settings'
     },
     {
-      sectionTitle: 'Pages'
-    },
-    {
-      title: 'Register',
-      icon: AccountPlusOutline,
-      path: '/register',
-      openInNewTab: true
-    },
-    {
-      title: 'Error',
-      icon: AlertCircleOutline,
-      path: '/error',
-      openInNewTab: true
-    },
-    {
-      title: 'Logout',
-      icon: Login,
-      path: '/logout'
-    },
-    {
       sectionTitle: 'User Interface'
     },
     {

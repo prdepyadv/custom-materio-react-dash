@@ -41,12 +41,12 @@ export const AuthProvider = ({ children }) => {
     setLoading(false)
   }
 
-  const logout = (email, password) => {
+  const logout = (token, redirectLocation) => {
     Cookies.remove('token')
     localStorage.removeItem('user_data')
     setUser(null)
     delete api.defaults.headers.Authorization
-    router.push('/login')
+    router.push(redirectLocation || '/login')
   }
 
   return (
