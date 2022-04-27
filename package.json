@@ -2,8 +2,10 @@
   "dependencies": {
     "axios": "^0.26.1",
     "js-cookie": "^3.0.1",
+    "react-loading-overlay": "^1.0.1",
     "react-loading-skeleton": "^3.0.3",
     "react-router-dom": "^6.3.0",
+    "react-spinners": "^0.11.0",
     "skeleton": "^0.1.2",
     "swr": "^1.2.2"
   }
