@@ -25,6 +25,8 @@ import api from 'services/api'
 import Pencil from 'mdi-material-ui/Pencil'
 import BicycleBasket from 'mdi-material-ui/DeleteCircle'
 import ReactLoading from 'react-loading'
+import Box from '@mui/material/Box'
+import LinearProgress from '@mui/material/LinearProgress'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -173,7 +175,10 @@ const Users = () => {
                 ) : (
                   <StyledTableRow key='0'>
                     <StyledTableCell component='th' align='center' colSpan='100%' scope='row'>
-                      <ReactLoading type='cylon' color='#0000FF' />
+                      <Box sx={{ width: '100%', height: '40px' }}>
+                        <LinearProgress />
+                        {/* <ReactLoading type='cylon' color='#0000FF' /> */}
+                      </Box>
                     </StyledTableCell>
                   </StyledTableRow>
                 )}
