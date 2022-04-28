@@ -12,6 +12,7 @@ import { styled } from '@mui/material/styles'
 import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableContainer from '@mui/material/TableContainer'
+import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import TableCell, { tableCellClasses } from '@mui/material/TableCell'
 import themeConfig from 'src/configs/themeConfig'
@@ -55,6 +56,17 @@ const Users = () => {
   })
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(null)
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage)
+  }
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(+event.target.value)
+    setPage(0)
+  }
 
   const router = useRouter()
   const loginPageRoute = themeConfig.loginPageRoute
@@ -75,12 +87,15 @@ const Users = () => {
         setValues({ ...values, users: [], isUserDataAvailable: false, error: err.message })
       })
   }
-
   useEffect(() => {
     loadUsers()
 
     return () => {
-      setValues({ ...values, isUserDataAvailable: false, users: [], error: '' })
+      setValues({})
+      setUser('')
+      setToken('')
+      setRowsPerPage(10)
+      setPage(0)
     }
   }, [])
 
@@ -128,10 +143,11 @@ const Users = () => {
                     .filter(function (data) {
                       return data._id != user._id
                     })
-                    .map(row => (
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, index) => (
                       <StyledTableRow key={row._id}>
                         <StyledTableCell component='th' scope='row'>
-                          {row._id}
+                          {index + 1 + page * rowsPerPage}
                         </StyledTableCell>
                         <StyledTableCell align='right'>{row.name}</StyledTableCell>
                         <StyledTableCell align='right'>{row.email}</StyledTableCell>
@@ -164,6 +180,21 @@ const Users = () => {
               </TableBody>
             </Table>
           </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component='div'
+            count={
+              values.users
+                ? values.users.filter(function (data) {
+                    return data._id != user._id
+                  }).length
+                : 0
+            }
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </Card>
       </Grid>
     </Grid>

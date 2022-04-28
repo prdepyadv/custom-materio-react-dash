@@ -49,7 +49,7 @@ const FormLayoutsBasic = (props) => {
                 type='email'
                 id='email'
                 label='Email'
-                disabled='true'
+                disabled={true}
                 value={values.email}
                 onChange={handleChange('email')}
                 helperText='You can use letters, numbers & periods'
